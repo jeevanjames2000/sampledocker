@@ -1,2 +1,2 @@
 # sampledocker
-sample cicd
+sample jenkins
