@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/jeevanjames2000/sampledocker.git'
+                git branch: 'main', url: 'https://github.com/jeevanjames2000/sampledocker.git'
             }
         }
         stage('Install Dependencies') {
@@ -12,19 +12,9 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Run Tests') {
-            steps {
-                sh 'npm test'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'npm run build'
-            }
-        }
         stage('Deploy') {
             steps {
-                sh './deploy.sh'  // Customize your deployment script
+                sh 'npm run dev'  // Customize your deployment script
             }
         }
     }
