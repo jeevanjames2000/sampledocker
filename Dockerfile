@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 
 # Copy package files first for better caching
 COPY package*.json ./
-0
+
 # Install global dependencies
 RUN npm i -g nodemon
 
