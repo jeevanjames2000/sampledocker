@@ -9,12 +9,12 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                powershell  'npm install'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'npm run dev'  // Customize your deployment script
+                powershell  'npm run dev'  // Customize your deployment script
             }
         }
     }
