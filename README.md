@@ -1,3 +1,3 @@
 # sampledocker
 
-changed 
+sample test
