@@ -1,0 +1,14 @@
+version: "3.8" # Specify Docker Compose version
+
+services:
+  server:
+    build:
+      context: . # Build from the current directory
+    environment:
+      NODE_ENV: production
+    ports:
+      - "7000:7000"
+    volumes:
+      - .:/usr/src/app # Mount local files for live updates in dev mode
+      - /usr/src/app/node_modules # Prevent overwriting node_modules
+    command: npm run dev # Ensures it runs with nodemon in development
