@@ -1,4 +1,4 @@
-name: Docker Build, Push, and Run
+name: Docker Build, Push, and Deploy
 
 on:
   push:
@@ -21,20 +21,33 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      # Step 3: Build the Docker image with a unique tag
+      # Step 3: Build and Tag Docker Image
       - name: Build Docker image
         run: |
           docker build --no-cache -t jeevanjames2000/sampledocker:${{ github.sha }} .
           docker tag jeevanjames2000/sampledocker:${{ github.sha }} jeevanjames2000/sampledocker:latest
 
-      # Step 4: Push the Docker image
+      # Step 4: Push Docker Image to Docker Hub
       - name: Push Docker image
         run: |
           docker push jeevanjames2000/sampledocker:${{ github.sha }}
           docker push jeevanjames2000/sampledocker:latest
 
-      # Step 5: Pull and run the Docker container
-      - name: Run Docker container
+  deploy:
+    runs-on: self-hosted # Use a self-hosted runner on your Windows machine
+    needs: build-and-push
+
+    steps:
+      # Step 1: Pull the latest image
+      - name: Pull latest Docker image
+        run: docker pull jeevanjames2000/sampledocker:latest
+
+      # Step 2: Stop and remove the existing container
+      - name: Stop and remove existing container
         run: |
-          docker pull jeevanjames2000/sampledocker-server:latest
-          docker run -d -p 7000:7000 jeevanjames2000/sampledocker:latest
+          docker stop sampledocker || true
+          docker rm sampledocker || true
+
+      # Step 3: Run the updated container
+      - name: Run updated container
+        run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
