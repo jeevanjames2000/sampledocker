@@ -12,3 +12,13 @@ services:
       - .:/usr/src/app # Mount local files for live updates in dev mode
       - /usr/src/app/node_modules # Prevent overwriting node_modules
     command: npm run dev # Ensures it runs with nodemon in development
+    restart: unless-stopped
+    container_name: sampledocker
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 30
