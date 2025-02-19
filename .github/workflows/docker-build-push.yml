@@ -52,13 +52,6 @@ jobs:
     needs: build-and-push
 
     steps:
-      # Step 1: Notify Deployment Started
-      - name: Notify Deployment Started
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "🚀 Deployment Started: Pulling latest Docker image and deploying to self-hosted runner."}' \
-          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
-
       # Step 2: Pull the latest image
       - name: Pull latest Docker image
         run: docker pull jeevanjames2000/sampledocker:latest
@@ -72,13 +65,6 @@ jobs:
       # Step 4: Run the updated container
       - name: Run updated container
         run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
-
-      # Step 5: Notify Deployment Completed
-      - name: Notify Deployment Completed
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "✅ Deployment Completed: Docker container successfully deployed and running on port 7000."}' \
-          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
   notify-failure:
     runs-on: ubuntu-latest
