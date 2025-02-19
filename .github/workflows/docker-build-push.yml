@@ -14,7 +14,7 @@ jobs:
       - name: Notify Google Chat - Build Started
         run: |
           curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "🚀 Build started for *sampledocker*"}' \
+          -d '{"text": "🚀Docker Build started for *sampledocker*"}' \
           "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
       # Step 2: Check out the repository
@@ -65,7 +65,7 @@ jobs:
       - name: Notify Google Chat - Deployment Started
         run: |
           curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "🚀 Deployment started for *sampledocker*"}' \
+          -d '{"text": "🚀 Docker Deployment started for *sampledocker*"}' \
           "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
       # Step 2: Pull the latest image
