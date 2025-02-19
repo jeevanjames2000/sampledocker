@@ -51,18 +51,16 @@ jobs:
     runs-on: self-hosted
     needs: build-and-push
 
-    steps:
-      # Step 2: Pull the latest image
+     steps:
+      # Step 1: Pull the latest image
       - name: Pull latest Docker image
         run: docker pull jeevanjames2000/sampledocker:latest
-
-      # Step 3: Stop and remove the existing container
+      # Step 2: Stop and remove the existing container
       - name: Stop and remove existing container
         run: |
-          docker stop sampledocker || true
-          docker rm sampledocker || true
-
-      # Step 4: Run the updated container
+          docker stop sampledocker
+          docker rm sampledocker
+      # Step 3: Run the updated container
       - name: Run updated container
         run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
 
