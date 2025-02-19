@@ -51,8 +51,8 @@ jobs:
 
       - name: Stop and remove existing container
         run: |
-          docker stop sampledocker || true
-          docker rm sampledocker || true
+          docker stop sampledocker -ErrorAction Continue
+          docker rm sampledocker -ErrorAction Continue
 
       - name: Run updated container
         run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
