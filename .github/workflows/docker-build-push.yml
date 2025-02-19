@@ -10,44 +10,90 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
+      # Step 1: Notify Google Chat - Build Started
+      - name: Notify Google Chat - Build Started
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "🚀 Build started for *sampledocker*"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+
+      # Step 2: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Log in to Docker Hub
+      # Step 3: Log in to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      # Step 3: Build and Tag Docker Image
+      # Step 4: Build and Tag Docker Image
       - name: Build Docker image
         run: |
           docker build --no-cache -t jeevanjames2000/sampledocker:${{ github.sha }} .
           docker tag jeevanjames2000/sampledocker:${{ github.sha }} jeevanjames2000/sampledocker:latest
 
-      # Step 4: Push Docker Image to Docker Hub
+      # Step 5: Push Docker Image to Docker Hub
       - name: Push Docker image
         run: |
           docker push jeevanjames2000/sampledocker:${{ github.sha }}
           docker push jeevanjames2000/sampledocker:latest
 
+      # Step 6: Notify Google Chat - Build Success
+      - name: Notify Google Chat - Build Successful
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "✅ *sampledocker* build and push successful!"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+
+      # Step 7: Notify Google Chat - Build Failed
+      - name: Notify Google Chat - Build Failed
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "❌ *sampledocker* build failed!"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+
   deploy:
-    runs-on: self-hosted # Use a self-hosted runner on your Windows machine
+    runs-on: self-hosted
     needs: build-and-push
 
     steps:
-      # Step 1: Pull the latest image
+      # Step 1: Notify Google Chat - Deployment Started
+      - name: Notify Google Chat - Deployment Started
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "🚀 Deployment started for *sampledocker*"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+
+      # Step 2: Pull the latest image
       - name: Pull latest Docker image
         run: docker pull jeevanjames2000/sampledocker:latest
 
-      # Step 2: Stop and remove the existing container
+      # Step 3: Stop and remove the existing container
       - name: Stop and remove existing container
         run: |
-          docker stop sampledocker
-          docker rm sampledocker
+          docker stop sampledocker || true
+          docker rm sampledocker || true
 
-      # Step 3: Run the updated container
+      # Step 4: Run the updated container
       - name: Run updated container
         run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
+
+      # Step 5: Notify Google Chat - Deployment Success
+      - name: Notify Google Chat - Deployment Successful
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "✅ *sampledocker* deployed successfully!"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+
+      # Step 6: Notify Google Chat - Deployment Failed
+      - name: Notify Google Chat - Deployment Failed
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "❌ *sampledocker* deployment failed!"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
