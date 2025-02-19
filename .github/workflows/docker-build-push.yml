@@ -47,19 +47,21 @@ jobs:
           -d '{"text": "✅ Build Completed: Docker image successfully built and pushed to Docker Hub."}' \
           "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
-  deploy:
-    runs-on: self-hosted
+   deploy:
+    runs-on: self-hosted # Use a self-hosted runner on your Windows machine
     needs: build-and-push
 
-     steps:
+    steps:
       # Step 1: Pull the latest image
       - name: Pull latest Docker image
         run: docker pull jeevanjames2000/sampledocker:latest
+
       # Step 2: Stop and remove the existing container
       - name: Stop and remove existing container
         run: |
           docker stop sampledocker
           docker rm sampledocker
+
       # Step 3: Run the updated container
       - name: Run updated container
         run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
