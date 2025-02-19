@@ -12,10 +12,8 @@ jobs:
     steps:
       # Step 1: Notify Google Chat - Build Started
       - name: Notify Google Chat - Build Started
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "🚀Docker Build started for *sampledocker*"}' \
-          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+       run: |
+          Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "🚀 Docker Deployment started for *sampledocker*"}' -ContentType "application/json"
 
       # Step 2: Check out the repository
       - name: Checkout repository
@@ -43,18 +41,14 @@ jobs:
       # Step 6: Notify Google Chat - Build Success
       - name: Notify Google Chat - Build Successful
         if: success()
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "✅ *sampledocker* build and push successful!"}' \
-          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+       run: |
+          Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "✅ *sampledocker* deployed successfully!"}' -ContentType "application/json"
 
       # Step 7: Notify Google Chat - Build Failed
       - name: Notify Google Chat - Build Failed
         if: failure()
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "❌ *sampledocker* build failed!"}' \
-          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
+       run: |
+          Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "❌ *sampledocker* build failed!"}' -ContentType "application/json"
 
   deploy:
     runs-on: self-hosted
