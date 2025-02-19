@@ -13,5 +13,5 @@ app.get("/", (req, res) => {
 app.get("/api", (req, res) => {
   res.json({ name: "jeevan test deploy" });
 });
-const PORT = 7005;
+const PORT = 7000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
