@@ -1,53 +1,20 @@
-name: Docker Build, Push, and Deploy
+deploy:
+  runs-on: self-hosted
+  needs: build-and-push
 
-on:
-  push:
-    branches:
-      - main
+  steps:
+    - name: Pull latest Docker image
+      run: docker pull jeevanjames2000/sampledocker:latest
 
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+    - name: Stop and remove existing container
+      shell: pwsh # Use PowerShell instead of Bash
+      run: |
+        if (docker ps -q -f name=sampledocker) {
+            docker stop sampledocker
+        }
+        if (docker ps -a -q -f name=sampledocker) {
+            docker rm sampledocker
+        }
 
-    steps:
-      # Step 1: Check out the repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Step 2: Log in to Docker Hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      # Step 3: Build and Tag Docker Image
-      - name: Build Docker image
-        run: |
-          docker build --no-cache -t jeevanjames2000/sampledocker:${{ github.sha }} .
-          docker tag jeevanjames2000/sampledocker:${{ github.sha }} jeevanjames2000/sampledocker:latest
-
-      # Step 4: Push Docker Image to Docker Hub
-      - name: Push Docker image
-        run: |
-          docker push jeevanjames2000/sampledocker:${{ github.sha }}
-          docker push jeevanjames2000/sampledocker:latest
-
-  deploy:
-    runs-on: self-hosted # Use a self-hosted runner on your Windows machine
-    needs: build-and-push
-
-    steps:
-      # Step 1: Pull the latest image
-      - name: Pull latest Docker image
-        run: docker pull jeevanjames2000/sampledocker:latest
-
-      # Step 2: Stop and remove the existing container
-      - name: Stop and remove existing container
-        run: |
-          docker stop sampledocker || true
-          docker rm sampledocker || true
-
-      # Step 3: Run the updated container
-      - name: Run updated container
-        run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
+    - name: Run updated container
+      run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
