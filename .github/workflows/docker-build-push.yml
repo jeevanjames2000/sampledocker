@@ -12,7 +12,7 @@ jobs:
     steps:
       # Step 1: Notify Google Chat - Build Started
       - name: Notify Google Chat - Build Started
-       run: |
+        run: |
           Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "🚀 Docker Deployment started for *sampledocker*"}' -ContentType "application/json"
 
       # Step 2: Check out the repository
