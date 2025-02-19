@@ -10,59 +10,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Notify Build Started
       - name: Notify Build Started
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"text": "🚀 Build Started: Docker Build, Push, and Deploy workflow triggered for commit ${{ github.sha }} on branch ${{ github.ref }}."}' \
           "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
-      # Step 2: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 3: Log in to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      # Step 4: Build and Tag Docker Image
       - name: Build Docker image
         run: |
           docker build --no-cache -t jeevanjames2000/sampledocker:${{ github.sha }} .
           docker tag jeevanjames2000/sampledocker:${{ github.sha }} jeevanjames2000/sampledocker:latest
 
-      # Step 5: Push Docker Image to Docker Hub
       - name: Push Docker image
         run: |
           docker push jeevanjames2000/sampledocker:${{ github.sha }}
           docker push jeevanjames2000/sampledocker:latest
 
-      # Step 6: Notify Build Completed
       - name: Notify Build Completed
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"text": "✅ Build Completed: Docker image successfully built and pushed to Docker Hub."}' \
           "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
-   deploy:
-    runs-on: self-hosted # Use a self-hosted runner on your Windows machine
+  deploy:
+    runs-on: self-hosted
     needs: build-and-push
 
     steps:
-      # Step 1: Pull the latest image
       - name: Pull latest Docker image
         run: docker pull jeevanjames2000/sampledocker:latest
 
-      # Step 2: Stop and remove the existing container
       - name: Stop and remove existing container
         run: |
-          docker stop sampledocker
-          docker rm sampledocker
+          docker stop sampledocker || true
+          docker rm sampledocker || true
 
-      # Step 3: Run the updated container
       - name: Run updated container
         run: docker run -d -p 7000:7000 --name sampledocker jeevanjames2000/sampledocker:latest
 
@@ -72,7 +63,6 @@ jobs:
     needs: [build-and-push, deploy]
 
     steps:
-      # Step 1: Notify Build or Deployment Failure
       - name: Notify Failure
         run: |
           curl -X POST -H "Content-Type: application/json" \
