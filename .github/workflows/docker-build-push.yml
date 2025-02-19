@@ -13,7 +13,9 @@ jobs:
       # Step 1: Notify Google Chat - Build Started
       - name: Notify Google Chat - Build Started
         run: |
-          Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "🚀 Docker Deployment started for *sampledocker*"}' -ContentType "application/json"
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "🚀 Docker Deployment started for *sampledocker*"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
       # Step 2: Check out the repository
       - name: Checkout repository
@@ -41,14 +43,18 @@ jobs:
       # Step 6: Notify Google Chat - Build Success
       - name: Notify Google Chat - Build Successful
         if: success()
-       run: |
-          Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "✅ *sampledocker* deployed successfully!"}' -ContentType "application/json"
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "✅ *sampledocker* built successfully!"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
       # Step 7: Notify Google Chat - Build Failed
       - name: Notify Google Chat - Build Failed
         if: failure()
-       run: |
-          Invoke-WebRequest -Uri "${{ secrets.GOOGLE_CHAT_WEBHOOK }}" -Method Post -Body '{"text": "❌ *sampledocker* build failed!"}' -ContentType "application/json"
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "❌ *sampledocker* build failed!"}' \
+          "${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
   deploy:
     runs-on: self-hosted
