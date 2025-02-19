@@ -2,4 +2,4 @@
 
 sample check
 
-triger again
+trigger
