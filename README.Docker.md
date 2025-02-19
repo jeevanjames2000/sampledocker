@@ -20,3 +20,12 @@ docs for more detail on building and pushing.
 
 ### References
 * [Docker's Node.js guide](https://docs.docker.com/language/nodejs/)
+
+
+### Commands to build image and run 
+
+# Build
+docker build -t "image name" .  (. for current working dir)
+# Run
+docker run -d -p 9000:9000 --name "tag name" "image name"
+
