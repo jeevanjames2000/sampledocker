@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install global dependencies
+
 RUN npm i -g nodemon
 
 # Install dependencies with cache mount optimization
