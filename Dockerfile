@@ -4,7 +4,7 @@ ARG NODE_VERSION=22.12.0
 # Use a lightweight Node.js image
 FROM node:${NODE_VERSION}-alpine
 
-# Set environment variable for production
+
 ENV NODE_ENV=production
 
 # Set working directory
@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install global dependencies
+
 RUN npm i -g nodemon
 
 # Install dependencies with cache mount optimization
