@@ -26,7 +26,7 @@ COPY . .
 # Use a non-root user for security
 USER node
 
-# Expose the application port 7000
+# Expose the application port
 EXPOSE 7000
 
 # Run the application
